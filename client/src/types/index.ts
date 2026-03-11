@@ -32,6 +32,7 @@ export interface Product {
   status: 'on' | 'off'
   createdAt: string
   updatedAt?: string
+  contactPhone?: string
 }
 
 // 分类类型

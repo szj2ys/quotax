@@ -9,8 +9,8 @@ import './index.scss'
 
 export default function QuotationProductDetail() {
   const [product, setProduct] = useState<Product | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [supplierId, setSupplierId] = useState<string>('')
+  const [_loading, setLoading] = useState(false)
+  const [_supplierId, setSupplierId] = useState<string>('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 

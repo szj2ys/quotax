@@ -1,6 +1,6 @@
-import { View, Text, Image, ScrollView } from '@tarojs/components'
+import { View, Text, ScrollView } from '@tarojs/components'
 import { useState, useEffect } from 'react'
-import { navigateTo, showToast } from '@tarojs/taro'
+import { showToast } from '@tarojs/taro'
 import { getProductList } from '@/api/product'
 import ProductCard from '@/components/ProductCard'
 import type { Product } from '@/types'
@@ -30,7 +30,7 @@ export default function ProductListPage() {
     }
   }
 
-  const handleAddToCart = async (productId: string) => {
+  const handleAddToCart = async (_productId: string) => {
     showToast({ title: '已加入购物车', icon: 'success' })
   }
 

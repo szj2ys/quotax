@@ -1,5 +1,5 @@
 import { get, post, put, del } from './request'
-import type { CartData, CartItem, OrderExportItem } from '@/types'
+import type { CartData, OrderExportItem } from '@/types'
 
 // 获取购物车
 export const getCart = () => {

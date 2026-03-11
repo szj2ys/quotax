@@ -33,7 +33,7 @@ export default function ImageUploader({
 
       // 检查文件大小
       for (const tempFilePath of res.tempFilePaths) {
-        const fileInfo = await Taro.getFileInfo({ filePath: tempFilePath })
+        const fileInfo = await Taro.getFileInfo({ filePath: tempFilePath }) as { size: number }
         if (fileInfo.size > maxSize * 1024 * 1024) {
           Taro.showToast({ title: `图片大小不能超过${maxSize}MB`, icon: 'none' })
           continue

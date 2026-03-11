@@ -1,13 +1,16 @@
-import { View, Text, Image, ScrollView } from '@tarojs/components'
-import { navigateBack, getCurrentInstance } from '@tarojs/taro'
+import { View, Text, Image, ScrollView, Swiper, SwiperItem } from '@tarojs/components'
+import Taro, { navigateBack, getCurrentInstance, showLoading, hideLoading, showToast, navigateTo } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import { getProductDetail } from '@/api/product'
-import type { Product } from '@/types'
+import { addToCart } from '@/api/cart'
+import type { Product, ProductSpec } from '@/types'
 import './index.scss'
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(false)
+  const [currentImage, setCurrentImage] = useState(0)
+  const [quantity, setQuantity] = useState(1)
 
   useEffect(() => {
     const instance = getCurrentInstance()
@@ -26,6 +29,7 @@ export default function ProductDetailPage() {
       setProduct(res)
     } catch (error) {
       console.error('获取产品详情失败:', error)
+      showToast({ title: '获取产品信息失败', icon: 'error' })
     } finally {
       setLoading(false)
     }
@@ -35,7 +39,48 @@ export default function ProductDetailPage() {
     navigateBack()
   }
 
-  if (!product) {
+  const handleAddToCart = async () => {
+    if (!product) return
+    try {
+      showLoading({ title: '添加中...' })
+      await addToCart(product.id)
+      hideLoading()
+      showToast({ title: '已加入购物车', icon: 'success' })
+    } catch (error) {
+      hideLoading()
+      showToast({ title: '添加失败', icon: 'error' })
+    }
+  }
+
+  const handleInquiry = () => {
+    if (!product) return
+    navigateTo({ url: `/pages/cart/index?productId=${product.id}&quantity=${quantity}` })
+  }
+
+  const formatPrice = (price: number) => {
+    return price.toFixed(2)
+  }
+
+  const getPriceTypeText = (type: string) => {
+    const typeMap: Record<string, string> = {
+      retail: '零售价',
+      wholesale: '批发价',
+      agent: '代理价'
+    }
+    return typeMap[type] || type
+  }
+
+  const increaseQuantity = () => {
+    setQuantity(prev => prev + 1)
+  }
+
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1)
+    }
+  }
+
+  if (loading || !product) {
     return (
       <View className='product-detail-page'>
         <View className='loading-state'>
@@ -57,34 +102,73 @@ export default function ProductDetailPage() {
       </View>
 
       <ScrollView className='content-scroll' scrollY>
-        {/* 产品图片 */}
-        <View className='product-image-wrapper'>
-          <Image
-            className='product-image'
-            src={product.images?.[0] || 'https://via.placeholder.com/400x400?text=No+Image'}
-            mode='aspectFill'
-          />
-        </View>
-
-        {/* 产品信息 */}
-        <View className='product-info-section'>
-          <View className='price-row'>
-            <Text className='price'>¥{product.price.toFixed(2)}</Text>
-            <Text className='unit'>/{product.unit}</Text>
-          </View>
-          <Text className='product-name'>{product.name}</Text>
-          {product.categoryName && (
-            <View className='category-tag'>
-              <Text>{product.categoryName}</Text>
+        {/* 图片轮播 */}
+        <View className='image-section'>
+          {product.images && product.images.length > 0 ? (
+            <Swiper
+              className='image-swiper'
+              indicatorDots
+              indicatorColor='#999'
+              indicatorActiveColor='#1890ff'
+              current={currentImage}
+              onChange={(e) => setCurrentImage(e.detail.current)}
+            >
+              {product.images.map((image, index) => (
+                <SwiperItem key={index}>
+                  <Image
+                    className='swiper-image'
+                    src={image}
+                    mode='aspectFill'
+                    onClick={() => {
+                      Taro.previewImage({
+                        current: image,
+                        urls: product.images
+                      })
+                    }}
+                  />
+                </SwiperItem>
+              ))}
+            </Swiper>
+          ) : (
+            <View className='no-image'>
+              <Text>暂无图片</Text>
             </View>
           )}
+          {product.images && product.images.length > 1 && (
+            <View className='image-indicator'>
+              <Text>{currentImage + 1} / {product.images.length}</Text>
+            </View>
+          )}
+        </View>
+
+        {/* 基本信息 */}
+        <View className='product-info-section'>
+          <View className='price-row'>
+            <Text className='price-symbol'>¥</Text>
+            <Text className='price'>{formatPrice(product.price)}</Text>
+            <Text className='unit'>/{product.unit}</Text>
+            <Text className='price-type'>{getPriceTypeText(product.priceType)}</Text>
+          </View>
+
+          <Text className='product-name'>{product.name}</Text>
+
+          <View className='meta-row'>
+            {product.categoryName && (
+              <View className='category-tag'>
+                <Text>{product.categoryName}</Text>
+              </View>
+            )}
+            <Text className={`status-tag ${product.status}`}>
+              {product.status === 'on' ? '上架中' : '已下架'}
+            </Text>
+          </View>
         </View>
 
         {/* 规格信息 */}
         {product.specs && product.specs.length > 0 && (
           <View className='specs-section'>
             <Text className='section-title'>产品规格</Text>
-            {product.specs.map((spec, index) => (
+            {product.specs.map((spec: ProductSpec, index) => (
               <View key={index} className='spec-row'>
                 <Text className='spec-label'>{spec.name}</Text>
                 <Text className='spec-value'>{spec.value}</Text>
@@ -101,8 +185,41 @@ export default function ProductDetailPage() {
           </View>
         )}
 
+        {/* 库存信息 */}
+        <View className='stock-section'>
+          <Text className='stock-label'>库存</Text>
+          <Text className='stock-value'>{product.stock} {product.unit}</Text>
+        </View>
+
         <View className='safe-area-bottom' />
       </ScrollView>
+
+      {/* 底部操作栏 */}
+      <View className='bottom-bar'>
+        <View className='quantity-section'>
+          <Text className='quantity-label'>数量</Text>
+          <View className='quantity-control'>
+            <View
+              className={`quantity-btn ${quantity <= 1 ? 'disabled' : ''}`}
+              onClick={decreaseQuantity}
+            >
+              <Text>-</Text>
+            </View>
+            <Text className='quantity-value'>{quantity}</Text>
+            <View className='quantity-btn' onClick={increaseQuantity}>
+              <Text>+</Text>
+            </View>
+          </View>
+        </View>
+        <View className='action-buttons'>
+          <View className='cart-btn' onClick={handleAddToCart}>
+            <Text>加入购物车</Text>
+          </View>
+          <View className='inquiry-btn' onClick={handleInquiry}>
+            <Text>立即询价</Text>
+          </View>
+        </View>
+      </View>
     </View>
   )
 }

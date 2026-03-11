@@ -254,7 +254,7 @@ export default function ProductAdd() {
               ) : (
                 <Text className='picker-placeholder'>请选择分类</Text>
               )}
-              <Text className='picker-arrow'>></Text>
+              <Text className='picker-arrow'>{'>'}</Text>
             </View>
           </Picker>
         </View>
@@ -286,7 +286,7 @@ export default function ProductAdd() {
           >
             <View className='picker-value'>
               <Text className='picker-text'>{priceTypes[priceTypeIndex]?.label}</Text>
-              <Text className='picker-arrow'>></Text>
+              <Text className='picker-arrow'>{'>'}</Text>
             </View>
           </Picker>
         </View>

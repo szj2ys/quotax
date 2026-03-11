@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { View, Text, Image, Input, ScrollView } from '@tarojs/components'
-import Taro, { usePullDownRefresh, stopPullDownRefresh, navigateTo, showToast, showModal } from '@tarojs/taro'
+import { usePullDownRefresh, stopPullDownRefresh, navigateTo, showToast, showModal } from '@tarojs/taro'
 import EmptyState from '@/components/EmptyState'
 import { getProductList, getCategoryList, deleteProduct, updateProduct } from '@/api'
 import type { Product, Category } from '@/types'

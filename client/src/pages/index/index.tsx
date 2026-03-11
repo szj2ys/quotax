@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { View, Text, Image, Swiper, SwiperItem, ScrollView } from '@tarojs/components'
 import { navigateTo, showToast, usePullDownRefresh, stopPullDownRefresh, useShareAppMessage } from '@tarojs/taro'
 import ProductCard from '@/components/ProductCard'

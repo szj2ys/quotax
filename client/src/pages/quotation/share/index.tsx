@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { View, Text, Image, ScrollView, Input } from '@tarojs/components'
-import { navigateTo, showToast, showLoading, hideLoading, usePullDownRefresh, stopPullDownRefresh, makePhoneCall, useRouter, getCurrentInstance } from '@tarojs/taro'
+import { navigateTo, showToast, showLoading, hideLoading, usePullDownRefresh, stopPullDownRefresh, makePhoneCall, getCurrentInstance } from '@tarojs/taro'
 import { getQuotation } from '@/api/product'
 import type { Category, Product, CompanyInfo } from '@/types'
 import './index.scss'

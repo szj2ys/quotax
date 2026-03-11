@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { View, Text, Image } from '@tarojs/components'
 import {
   showLoading,
   hideLoading,
   showToast,
   saveImageToPhotosAlbum,
-  getUserProfile,
-  useDidShow
+  useDidShow,
+  navigateTo,
+  downloadFile,
+  setClipboardData
 } from '@tarojs/taro'
 import { getUserInfo, clearAuth } from '@/utils/auth'
 import { generateQRCode } from '@/api/qrcode'
@@ -16,12 +18,19 @@ export default function UserPage() {
   const [userInfo, setUserInfo] = useState<any>(null)
   const [showQRCode, setShowQRCode] = useState(false)
   const [qrCodeUrl, setQrCodeUrl] = useState('')
-  const [menuItems] = useState([
-    { icon: '📦', label: '我的产品', path: '/pages/product/index' },
-    { icon: '📋', label: '报价记录', path: '/pages/cart/index' },
+
+  // 管理菜单
+  const managementMenuItems = [
+    { icon: '📦', label: '产品管理', path: '/pages/product/manage/index' },
+    { icon: '📂', label: '分类管理', path: '/pages/category/manage/index' }
+  ]
+
+  // 其他菜单
+  const otherMenuItems = [
+    { icon: '🛒', label: '购物车', path: '/pages/cart/index' },
     { icon: '⭐', label: '收藏夹', path: '/pages/favorites/index' },
     { icon: '⚙️', label: '设置', path: '/pages/settings/index' }
-  ])
+  ]
 
   useDidShow(() => {
     loadUserInfo()
@@ -30,6 +39,11 @@ export default function UserPage() {
   const loadUserInfo = () => {
     const user = getUserInfo()
     setUserInfo(user)
+  }
+
+  // 跳转到页面
+  const handleNavigate = (path: string) => {
+    navigateTo({ url: path })
   }
 
   // 生成小程序码
@@ -61,12 +75,8 @@ export default function UserPage() {
 
     try {
       // 先下载图片
-      const downloadRes = await new Promise<any>((resolve, reject) => {
-        wx.downloadFile({
-          url: qrCodeUrl,
-          success: resolve,
-          fail: reject
-        })
+      const downloadRes = await downloadFile({
+        url: qrCodeUrl
       })
 
       if (downloadRes.statusCode === 200) {
@@ -95,7 +105,7 @@ export default function UserPage() {
 
     const link = `pages/quotation/share/index?userId=${userInfo.id}`
 
-    wx.setClipboardData({
+    setClipboardData({
       data: link,
       success: () => {
         showToast({ title: '链接已复制', icon: 'success' })
@@ -163,10 +173,27 @@ export default function UserPage() {
         </View>
       </View>
 
-      {/* 菜单列表 */}
+      {/* 产品管理区域 */}
       <View className='menu-section'>
-        {menuItems.map((item, index) => (
-          <View key={index} className='menu-item'>
+        <View className='menu-header'>
+          <Text className='menu-title'>产品管理</Text>
+        </View>
+        {managementMenuItems.map((item, index) => (
+          <View key={index} className='menu-item' onClick={() => handleNavigate(item.path)}>
+            <Text className='menu-icon'>{item.icon}</Text>
+            <Text className='menu-label'>{item.label}</Text>
+            <Text className='menu-arrow'>›</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* 其他功能区域 */}
+      <View className='menu-section'>
+        <View className='menu-header'>
+          <Text className='menu-title'>其他</Text>
+        </View>
+        {otherMenuItems.map((item, index) => (
+          <View key={index} className='menu-item' onClick={() => handleNavigate(item.path)}>
             <Text className='menu-icon'>{item.icon}</Text>
             <Text className='menu-label'>{item.label}</Text>
             <Text className='menu-arrow'>›</Text>
