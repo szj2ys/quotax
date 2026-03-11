@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { View, Text, Image, Swiper, SwiperItem, ScrollView } from '@tarojs/taro'
-import { navigateTo, showToast, usePullDownRefresh, stopPullDownRefresh } from '@tarojs/taro'
+import { View, Text, Image, Swiper, SwiperItem, ScrollView } from '@tarojs/components'
+import { navigateTo, showToast, usePullDownRefresh, stopPullDownRefresh, useShareAppMessage } from '@tarojs/taro'
 import ProductCard from '@/components/ProductCard'
 import { getCategoryList, getProductList, addToCart } from '@/api'
 import { getUserInfo } from '@/utils/auth'
@@ -103,6 +103,15 @@ export default function Index() {
   const handleViewAllProducts = () => {
     navigateTo({ url: '/pages/product/index' })
   }
+
+  // 配置分享
+  useShareAppMessage(() => {
+    return {
+      title: `${userInfo?.companyName || '我的'}的产品报价单`,
+      path: `/pages/quotation/share/index?userId=${userInfo?.id || ''}`,
+      imageUrl: userInfo?.companyLogo || '/assets/images/share-default.png'
+    }
+  })
 
   return (
     <View className='index-page'>

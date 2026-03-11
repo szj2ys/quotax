@@ -1,0 +1,84 @@
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 24px;
+
+  .login-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 48px;
+
+    .logo {
+      font-size: 72px;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  .login-content {
+    width: 100%;
+    max-width: 320px;
+
+    .login-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+
+      .card-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #262626;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .card-desc {
+        font-size: 14px;
+        color: #8c8c8c;
+        margin-bottom: 24px;
+        display: block;
+      }
+
+      .login-btn {
+        width: 100%;
+        height: 48px;
+        line-height: 48px;
+        background: #07c160;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+
+        &::after {
+          border: none;
+        }
+      }
+    }
+  }
+
+  .login-footer {
+    margin-top: auto;
+    padding-top: 24px;
+
+    .footer-text {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}

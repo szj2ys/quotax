@@ -123,6 +123,7 @@ const verifyToken = (token) => {
 };
 
 module.exports = {
+  auth: authenticate,
   authenticate,
   optionalAuth,
   generateToken,

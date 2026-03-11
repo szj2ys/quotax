@@ -5,7 +5,9 @@ export default {
     'pages/product/detail/index',
     'pages/cart/index',
     'pages/user/index',
-    'pages/login/index'
+    'pages/login/index',
+    'pages/quotation/share/index',
+    'pages/quotation/product/index'
   ],
   tabBar: {
     color: '#8c8c8c',

@@ -1,0 +1,267 @@
+.user-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 20px;
+
+  // 用户信息头部
+  .user-header {
+    background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+    padding: 24px 16px;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+
+      .user-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .user-avatar-placeholder {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+
+        .avatar-icon {
+          font-size: 32px;
+        }
+      }
+
+      .user-meta {
+        margin-left: 16px;
+
+        .user-name {
+          font-size: 18px;
+          font-weight: 600;
+          color: #fff;
+          display: block;
+        }
+
+        .company-name {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.8);
+          margin-top: 6px;
+          display: block;
+        }
+      }
+    }
+  }
+
+  // 分享区域
+  .share-section {
+    background: #fff;
+    margin: 12px;
+    padding: 16px;
+    border-radius: 12px;
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #262626;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .share-grid {
+      display: flex;
+      justify-content: space-around;
+
+      .share-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 12px;
+
+        .share-icon-wrapper {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 8px;
+
+          &.qrcode {
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+          }
+
+          &.wechat {
+            background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+          }
+
+          &.link {
+            background: linear-gradient(135deg, #fa8c16 0%, #d46b08 100%);
+          }
+
+          .share-icon {
+            font-size: 28px;
+          }
+        }
+
+        .share-label {
+          font-size: 13px;
+          color: #595959;
+        }
+      }
+    }
+  }
+
+  // 菜单区域
+  .menu-section {
+    background: #fff;
+    margin: 0 12px;
+    border-radius: 12px;
+    overflow: hidden;
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .menu-icon {
+        font-size: 20px;
+        margin-right: 12px;
+      }
+
+      .menu-label {
+        flex: 1;
+        font-size: 15px;
+        color: #262626;
+      }
+
+      .menu-arrow {
+        font-size: 18px;
+        color: #bfbfbf;
+      }
+    }
+  }
+
+  // 退出登录
+  .logout-section {
+    margin: 24px 12px;
+
+    .logout-btn {
+      background: #fff;
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+
+      .logout-text {
+        font-size: 15px;
+        color: #f5222d;
+      }
+    }
+  }
+
+  // 小程序码弹窗
+  .qrcode-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .modal-content {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      width: 80%;
+      max-width: 320px;
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        .modal-title {
+          font-size: 17px;
+          font-weight: 600;
+          color: #262626;
+        }
+
+        .modal-close {
+          font-size: 20px;
+          color: #8c8c8c;
+          padding: 4px;
+        }
+      }
+
+      .qrcode-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        background: #f5f5f5;
+        border-radius: 12px;
+        margin-bottom: 16px;
+
+        .qrcode-image {
+          width: 200px;
+          height: 200px;
+        }
+
+        .qrcode-placeholder {
+          width: 200px;
+          height: 200px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .placeholder-text {
+            font-size: 14px;
+            color: #8c8c8c;
+          }
+        }
+      }
+
+      .qrcode-tip {
+        font-size: 13px;
+        color: #8c8c8c;
+        text-align: center;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      .modal-actions {
+        .action-btn {
+          padding: 12px;
+          border-radius: 8px;
+          text-align: center;
+
+          &.save-btn {
+            background: #1890ff;
+
+            .btn-text {
+              font-size: 15px;
+              color: #fff;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 底部安全区域
+  .safe-area-bottom {
+    height: constant(safe-area-inset-bottom);
+    height: env(safe-area-inset-bottom);
+  }
+}

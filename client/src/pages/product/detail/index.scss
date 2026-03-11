@@ -1,0 +1,165 @@
+.product-detail-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #1890ff;
+
+    .back-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+
+      .back-icon {
+        font-size: 18px;
+        color: #fff;
+      }
+    }
+
+    .nav-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .nav-placeholder {
+      width: 32px;
+    }
+  }
+
+  .content-scroll {
+    height: calc(100vh - 56px);
+  }
+
+  .product-image-wrapper {
+    background: #fff;
+
+    .product-image {
+      width: 100%;
+      height: 375px;
+    }
+  }
+
+  .product-info-section {
+    background: #fff;
+    padding: 16px;
+    margin-bottom: 12px;
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 12px;
+
+      .price {
+        font-size: 28px;
+        font-weight: 700;
+        color: #f5222d;
+      }
+
+      .unit {
+        font-size: 14px;
+        color: #8c8c8c;
+        margin-left: 4px;
+      }
+    }
+
+    .product-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #262626;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .category-tag {
+      display: inline-block;
+      background: #f5f5f5;
+      padding: 4px 12px;
+      border-radius: 4px;
+
+      Text {
+        font-size: 12px;
+        color: #595959;
+      }
+    }
+  }
+
+  .specs-section {
+    background: #fff;
+    padding: 16px;
+    margin-bottom: 12px;
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #262626;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .spec-row {
+      display: flex;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .spec-label {
+        width: 80px;
+        font-size: 14px;
+        color: #8c8c8c;
+      }
+
+      .spec-value {
+        flex: 1;
+        font-size: 14px;
+        color: #262626;
+      }
+    }
+  }
+
+  .description-section {
+    background: #fff;
+    padding: 16px;
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #262626;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .description-text {
+      font-size: 14px;
+      color: #595959;
+      line-height: 1.6;
+    }
+  }
+
+  .safe-area-bottom {
+    height: 20px;
+  }
+
+  .loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    Text {
+      font-size: 14px;
+      color: #8c8c8c;
+    }
+  }
+}

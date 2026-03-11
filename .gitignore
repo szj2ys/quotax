@@ -46,3 +46,7 @@ project.private.config.json
 # Uploads
 uploads/
 public/uploads/
+
+# TODO files for worktrees
+TODO.md
+.worktrees/
