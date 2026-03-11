@@ -9,6 +9,7 @@ import './index.scss'
 export default function ProductListPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     fetchProducts()
@@ -16,6 +17,7 @@ export default function ProductListPage() {
 
   const fetchProducts = async () => {
     setLoading(true)
+    setError(false)
     try {
       const res = await getProductList({
         page: 1,
@@ -25,6 +27,7 @@ export default function ProductListPage() {
       setProducts(res.list)
     } catch (error) {
       console.error('获取产品列表失败:', error)
+      setError(true)
     } finally {
       setLoading(false)
     }
@@ -32,6 +35,10 @@ export default function ProductListPage() {
 
   const handleAddToCart = async (_productId: string) => {
     showToast({ title: '已加入购物车', icon: 'success' })
+  }
+
+  const handleAddProduct = () => {
+    navigateTo({ url: '/pages/product/add/index' })
   }
 
   return (
@@ -42,25 +49,57 @@ export default function ProductListPage() {
       </View>
 
       <ScrollView className='content-scroll' scrollY>
-        <View className='product-grid'>
-          {products.map(product => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              name={product.name}
-              image={product.images[0]}
-              price={product.price}
-              unit={product.unit}
-              specs={product.specs}
-              onAddToCart={handleAddToCart}
-            />
-          ))}
-        </View>
+        {/* 加载中 */}
+        {loading && (
+          <View className='loading-container'>
+            <View className='loading-spinner'></View>
+            <Text className='loading-text'>加载中...</Text>
+          </View>
+        )}
 
-        {products.length === 0 && !loading && (
-          <View className='empty-state'>
-            <Text className='empty-icon'>📦</Text>
-            <Text className='empty-text'>暂无产品</Text>
+        {/* 产品网格 */}
+        {!loading && !error && products.length > 0 && (
+          <View className='product-grid'>
+            {products.map(product => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                name={product.name}
+                image={product.images[0]}
+                price={product.price}
+                unit={product.unit}
+                specs={product.specs}
+                onAddToCart={handleAddToCart}
+              />
+            ))}
+          </View>
+        )}
+
+        {/* 空状态 */}
+        {!loading && !error && products.length === 0 && (
+          <View className='empty-wrapper'>
+            <View className='empty-icon-wrapper'>
+              <Text className='empty-icon'>📦</Text>
+            </View>
+            <Text className='empty-title'>暂无产品</Text>
+            <Text className='empty-desc'>还没有添加任何产品，快去添加吧</Text>
+            <View className='empty-action' onClick={handleAddProduct}>
+              <Text className='action-text'>添加产品</Text>
+            </View>
+          </View>
+        )}
+
+        {/* 错误状态 */}
+        {!loading && error && (
+          <View className='empty-wrapper'>
+            <View className='empty-icon-wrapper'>
+              <Text className='empty-icon'>📡</Text>
+            </View>
+            <Text className='empty-title'>网络连接失败</Text>
+            <Text className='empty-desc'>请检查网络设置后重试</Text>
+            <View className='empty-action' onClick={fetchProducts}>
+              <Text className='action-text'>🔄 重新加载</Text>
+            </View>
           </View>
         )}
 

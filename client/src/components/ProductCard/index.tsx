@@ -42,14 +42,21 @@ export default class ProductCard extends Component<ProductCardProps> {
         <View className='product-image-wrapper'>
           <Image
             className='product-image'
-            src={image || 'https://via.placeholder.com/300x300?text=No+Image'}
+            src={image}
             mode='aspectFill'
+            lazyLoad
           />
+          {!image && (
+            <View className='image-placeholder'>
+              <Text className='placeholder-icon'>📷</Text>
+              <Text className='placeholder-text'>暂无图片</Text>
+            </View>
+          )}
           <View
             className={`favorite-btn ${isFavorite ? 'active' : ''}`}
             onClick={this.handleFavorite}
           >
-            <Text className='icon'>{isFavorite ? '❤' : '♡'}</Text>
+            <Text className='icon'>{isFavorite ? '❤️' : '🤍'}</Text>
           </View>
         </View>
         <View className='product-info'>

@@ -12,19 +12,38 @@
     padding: 60px 40px;
 
     .empty-icon {
-      font-size: 64px;
+      font-size: 72px;
       margin-bottom: 16px;
     }
 
     .empty-text {
-      font-size: 16px;
+      font-size: 18px;
+      font-weight: 600;
       color: #262626;
       margin-bottom: 8px;
     }
 
     .empty-hint {
-      font-size: 13px;
+      font-size: 14px;
       color: #8c8c8c;
+      margin-bottom: 24px;
+    }
+
+    .empty-action {
+      padding: 12px 32px;
+      background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+      border-radius: 24px;
+      box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      .action-text {
+        font-size: 14px;
+        color: #fff;
+        font-weight: 500;
+      }
     }
   }
 }
