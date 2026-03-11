@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text, Image, Button } from '@tarojs/components'
 import {
   showLoading,
   hideLoading,
@@ -10,7 +10,7 @@ import {
   downloadFile,
   setClipboardData
 } from '@tarojs/taro'
-import { getUserInfo, clearAuth } from '@/utils/auth'
+import { getUserInfo, clearAuth, isLoggedIn } from '@/utils/auth'
 import { generateQRCode } from '@/api/qrcode'
 import './index.scss'
 
@@ -18,6 +18,7 @@ export default function UserPage() {
   const [userInfo, setUserInfo] = useState<any>(null)
   const [showQRCode, setShowQRCode] = useState(false)
   const [qrCodeUrl, setQrCodeUrl] = useState('')
+  const [loggedIn, setLoggedIn] = useState(false)
 
   // 管理菜单
   const managementMenuItems = [
@@ -37,18 +38,34 @@ export default function UserPage() {
   })
 
   const loadUserInfo = () => {
-    const user = getUserInfo()
-    setUserInfo(user)
+    const isUserLoggedIn = isLoggedIn()
+    setLoggedIn(isUserLoggedIn)
+
+    if (isUserLoggedIn) {
+      const user = getUserInfo()
+      setUserInfo(user)
+    } else {
+      setUserInfo(null)
+    }
+  }
+
+  // 跳转到登录页
+  const handleLogin = () => {
+    navigateTo({ url: '/pages/login/index' })
   }
 
   // 跳转到页面
   const handleNavigate = (path: string) => {
+    if (!loggedIn) {
+      showToast({ title: '请先登录', icon: 'none' })
+      return
+    }
     navigateTo({ url: path })
   }
 
   // 生成小程序码
   const handleGenerateQRCode = async () => {
-    if (!userInfo?.id) {
+    if (!loggedIn || !userInfo?.id) {
       showToast({ title: '请先登录', icon: 'none' })
       return
     }
@@ -98,7 +115,7 @@ export default function UserPage() {
 
   // 复制链接
   const handleCopyLink = () => {
-    if (!userInfo?.id) {
+    if (!loggedIn || !userInfo?.id) {
       showToast({ title: '请先登录', icon: 'none' })
       return
     }
@@ -118,6 +135,10 @@ export default function UserPage() {
 
   // 分享给好友
   const handleShareToFriend = () => {
+    if (!loggedIn) {
+      showToast({ title: '请先登录', icon: 'none' })
+      return
+    }
     // 触发右上角分享菜单
     showToast({ title: '点击右上角分享按钮', icon: 'none' })
   }
@@ -126,6 +147,7 @@ export default function UserPage() {
   const handleLogout = () => {
     clearAuth()
     setUserInfo(null)
+    setLoggedIn(false)
     showToast({ title: '已退出登录', icon: 'success' })
   }
 
@@ -143,8 +165,20 @@ export default function UserPage() {
           )}
           <View className='user-meta'>
             <Text className='user-name'>{userInfo?.nickName || '未登录'}</Text>
-            <Text className='company-name'>{userInfo?.companyName || '点击登录'}</Text>
+            <Text className='company-name'>
+              {userInfo?.companyName || (loggedIn ? '暂未设置公司' : '点击登录查看更多功能')}
+            </Text>
           </View>
+          {!loggedIn && (
+            <Button
+              className='login-btn-small'
+              type='primary'
+              size='mini'
+              onClick={handleLogin}
+            >
+              去登录
+            </Button>
+          )}
         </View>
       </View>
 
@@ -152,19 +186,28 @@ export default function UserPage() {
       <View className='share-section'>
         <Text className='section-title'>分享报价单</Text>
         <View className='share-grid'>
-          <View className='share-item' onClick={handleGenerateQRCode}>
+          <View
+            className={`share-item ${!loggedIn ? 'disabled' : ''}`}
+            onClick={handleGenerateQRCode}
+          >
             <View className='share-icon-wrapper qrcode'>
               <Text className='share-icon'>📱</Text>
             </View>
             <Text className='share-label'>生成小程序码</Text>
           </View>
-          <View className='share-item' onClick={handleShareToFriend}>
+          <View
+            className={`share-item ${!loggedIn ? 'disabled' : ''}`}
+            onClick={handleShareToFriend}
+          >
             <View className='share-icon-wrapper wechat'>
               <Text className='share-icon'>💬</Text>
             </View>
             <Text className='share-label'>转发给好友</Text>
           </View>
-          <View className='share-item' onClick={handleCopyLink}>
+          <View
+            className={`share-item ${!loggedIn ? 'disabled' : ''}`}
+            onClick={handleCopyLink}
+          >
             <View className='share-icon-wrapper link'>
               <Text className='share-icon'>🔗</Text>
             </View>
@@ -179,7 +222,11 @@ export default function UserPage() {
           <Text className='menu-title'>产品管理</Text>
         </View>
         {managementMenuItems.map((item, index) => (
-          <View key={index} className='menu-item' onClick={() => handleNavigate(item.path)}>
+          <View
+            key={index}
+            className={`menu-item ${!loggedIn ? 'disabled' : ''}`}
+            onClick={() => handleNavigate(item.path)}
+          >
             <Text className='menu-icon'>{item.icon}</Text>
             <Text className='menu-label'>{item.label}</Text>
             <Text className='menu-arrow'>›</Text>
@@ -193,7 +240,11 @@ export default function UserPage() {
           <Text className='menu-title'>其他</Text>
         </View>
         {otherMenuItems.map((item, index) => (
-          <View key={index} className='menu-item' onClick={() => handleNavigate(item.path)}>
+          <View
+            key={index}
+            className={`menu-item ${!loggedIn ? 'disabled' : ''}`}
+            onClick={() => handleNavigate(item.path)}
+          >
             <Text className='menu-icon'>{item.icon}</Text>
             <Text className='menu-label'>{item.label}</Text>
             <Text className='menu-arrow'>›</Text>
@@ -202,7 +253,7 @@ export default function UserPage() {
       </View>
 
       {/* 退出登录 */}
-      {userInfo && (
+      {loggedIn && (
         <View className='logout-section'>
           <View className='logout-btn' onClick={handleLogout}>
             <Text className='logout-text'>退出登录</Text>

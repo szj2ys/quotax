@@ -1,3 +1,5 @@
+const path = require('path')
+
 const config = {
   projectName: 'b2b-quotation-miniapp',
   date: '2026-3-10',
@@ -11,6 +13,9 @@ const config = {
   outputRoot: 'dist',
   plugins: [],
   defineConstants: {
+  },
+  alias: {
+    '@': path.resolve(__dirname, '..', 'src')
   },
   copy: {
     patterns: [

@@ -78,6 +78,7 @@ export default function Index() {
   })
 
   // 加载更多
+  // @ts-expect-error 保留供后续使用
   const handleLoadMore = () => {
     if (!loading && hasMore) {
       fetchProducts(page + 1)

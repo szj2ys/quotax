@@ -24,7 +24,7 @@ export const request = async <T = any>(options: RequestOptions): Promise<T> => {
     Taro.showLoading({ title: loadingText, mask: true })
   }
 
-  // 添加token
+  // 添加token到请求头
   const token = getToken()
   if (token) {
     header['Authorization'] = `Bearer ${token}`
@@ -52,7 +52,7 @@ export const request = async <T = any>(options: RequestOptions): Promise<T> => {
       if (code === 200) {
         return result as T
       } else if (code === 401) {
-        // Token过期，清除登录状态
+        // Token过期或无效，清除登录状态并跳转登录页
         clearAuth()
         Taro.navigateTo({ url: '/pages/login/index' })
         throw new Error('登录已过期，请重新登录')
@@ -61,6 +61,12 @@ export const request = async <T = any>(options: RequestOptions): Promise<T> => {
         throw new Error(message || '请求失败')
       }
     } else {
+      // 处理 HTTP 401 状态码
+      if (statusCode === 401) {
+        clearAuth()
+        Taro.navigateTo({ url: '/pages/login/index' })
+        throw new Error('登录已过期，请重新登录')
+      }
       showError('网络请求失败')
       throw new Error('网络请求失败')
     }
