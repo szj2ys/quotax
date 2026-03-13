@@ -23,8 +23,10 @@
     "morgan": "^1.10.0",
     "qrcode": "^1.5.3",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.31",
     "xlsx": "^0.18.5",
-    "canvas": "^2.11.2"
+    "canvas": "^2.11.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",

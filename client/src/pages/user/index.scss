@@ -50,6 +50,16 @@
           margin-top: 6px;
           display: block;
         }
+
+        .analytics-preview {
+          font-size: 12px;
+          color: #fff;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 4px 10px;
+          border-radius: 12px;
+          margin-top: 8px;
+          display: inline-block;
+        }
       }
     }
   }
@@ -142,10 +152,35 @@
   // 菜单区域
   .menu-section {
     background: #fff;
-    margin: 0 12px;
+    margin: 0 12px 12px;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    .menu-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f0f0;
+
+      .menu-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #262626;
+        position: relative;
+        padding-left: 10px;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 16px;
+          background: #1890ff;
+          border-radius: 2px;
+        }
+      }
+    }
 
     .menu-item {
       display: flex;
@@ -162,20 +197,83 @@
         border-bottom: none;
       }
 
+      &.company-menu-item {
+        .menu-content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+
+          .menu-label {
+            font-size: 15px;
+            color: #262626;
+            margin-bottom: 4px;
+          }
+
+          .menu-subtitle {
+            font-size: 12px;
+            color: #8c8c8c;
+          }
+        }
+      }
+
       .menu-icon {
         font-size: 20px;
         margin-right: 12px;
       }
 
-      .menu-label {
+      .menu-content {
         flex: 1;
+      }
+
+      .menu-label {
         font-size: 15px;
         color: #262626;
+      }
+
+      .menu-badge {
+        background: #ff4d4f;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 5px;
+        margin-right: 8px;
+
+        .badge-text {
+          font-size: 11px;
+          color: #fff;
+          font-weight: 600;
+        }
       }
 
       .menu-arrow {
         font-size: 18px;
         color: #bfbfbf;
+      }
+    }
+
+    .company-summary {
+      display: flex;
+      padding: 12px 16px;
+      background: #fafafa;
+      border-top: 1px dashed #f0f0f0;
+
+      .company-summary-item {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+
+        .summary-icon {
+          font-size: 14px;
+          margin-right: 4px;
+        }
+
+        .summary-text {
+          font-size: 13px;
+          color: #8c8c8c;
+        }
       }
     }
   }

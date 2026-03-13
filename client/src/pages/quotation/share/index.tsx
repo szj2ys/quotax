@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { View, Text, Image, ScrollView, Input } from '@tarojs/components'
-import { navigateTo, showToast, showLoading, hideLoading, usePullDownRefresh, stopPullDownRefresh, makePhoneCall, getCurrentInstance } from '@tarojs/taro'
+import { navigateTo, showToast, showLoading, hideLoading, usePullDownRefresh, stopPullDownRefresh, makePhoneCall, getCurrentInstance, getStorageSync, setStorageSync } from '@tarojs/taro'
 import { getQuotation } from '@/api/product'
+import { trackView, trackEvent } from '@/api/analytics'
 import type { Category, Product, CompanyInfo } from '@/types'
 import './index.scss'
 
@@ -14,6 +15,89 @@ export default function QuotationShare() {
   const [keyword, setKeyword] = useState('')
   const [loading, setLoading] = useState(false)
   const [userId, setUserId] = useState<string>('')
+
+  // Analytics tracking refs
+  const pageStartTime = useRef<number>(0)
+  const visitorId = useRef<string>('')
+  const maxScrollDepth = useRef<number>(0)
+  const hasTrackedView = useRef<boolean>(false)
+
+  // Generate or get visitor ID
+  const getVisitorId = useCallback(() => {
+    let vid = getStorageSync('visitor_id')
+    if (!vid) {
+      vid = `v_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+      setStorageSync('visitor_id', vid)
+    }
+    return vid
+  }, [])
+
+  // Track page view
+  const trackPageView = useCallback(async (targetUserId: string) => {
+    if (hasTrackedView.current) return
+    hasTrackedView.current = true
+
+    try {
+      await trackView({
+        userId: targetUserId,
+        visitorId: visitorId.current,
+        page: 'quotation_share',
+        source: 'wechat_share',
+      })
+    } catch (error) {
+      console.error('Track view failed:', error)
+    }
+  }, [])
+
+  // Track product click
+  const trackProductClick = useCallback(async (productId: string) => {
+    if (!userId) return
+    try {
+      await trackEvent({
+        userId,
+        visitorId: visitorId.current,
+        eventType: 'product_click',
+        eventData: { productId },
+      })
+    } catch (error) {
+      console.error('Track product click failed:', error)
+    }
+  }, [userId])
+
+  // Track scroll depth
+  const handleScroll = useCallback((e: any) => {
+    const { scrollHeight, scrollTop, clientHeight } = e.detail
+    const scrollPercent = Math.round(((scrollTop + clientHeight) / scrollHeight) * 100)
+
+    if (scrollPercent > maxScrollDepth.current) {
+      maxScrollDepth.current = scrollPercent
+
+      // Track when reaching certain milestones
+      if (scrollPercent === 25 || scrollPercent === 50 || scrollPercent === 75 || scrollPercent === 100) {
+        if (userId) {
+          trackEvent({
+            userId,
+            visitorId: visitorId.current,
+            eventType: 'scroll',
+            eventData: { depth: scrollPercent },
+          }).catch(console.error)
+        }
+      }
+    }
+  }, [userId])
+
+  // Track page duration when leaving
+  const trackDuration = useCallback(() => {
+    if (!userId || pageStartTime.current === 0) return
+
+    const duration = Math.round((Date.now() - pageStartTime.current) / 1000)
+    trackEvent({
+      userId,
+      visitorId: visitorId.current,
+      eventType: 'duration',
+      eventData: { seconds: duration },
+    }).catch(console.error)
+  }, [userId])
 
   // 获取路由参数
   useEffect(() => {
@@ -34,11 +118,22 @@ export default function QuotationShare() {
 
     if (targetUserId) {
       setUserId(targetUserId)
+      // Initialize visitor ID
+      visitorId.current = getVisitorId()
+      // Start tracking time
+      pageStartTime.current = Date.now()
       fetchQuotation(targetUserId)
+      // Track initial page view
+      trackPageView(targetUserId)
     } else {
       showToast({ title: '无效链接', icon: 'error' })
     }
-  }, [])
+
+    // Track duration on unmount
+    return () => {
+      trackDuration()
+    }
+  }, [getVisitorId, trackPageView, trackDuration])
 
   // 获取报价单数据
   const fetchQuotation = async (targetUserId: string) => {
@@ -108,6 +203,8 @@ export default function QuotationShare() {
   // 查看产品详情
   const handleViewProduct = (productId: string) => {
     if (!userId) return
+    // Track product click
+    trackProductClick(productId)
     navigateTo({
       url: `/pages/quotation/product/index?id=${productId}&supplierId=${userId}`
     })
@@ -129,6 +226,12 @@ export default function QuotationShare() {
 
   return (
     <View className='quotation-share-page'>
+      <ScrollView
+        scrollY
+        className='page-scroll-view'
+        onScroll={handleScroll}
+        scrollWithAnimation={false}
+      >
       {/* 公司信息头部 */}
       <View className='company-header'>
         <View className='company-info'>
@@ -248,6 +351,7 @@ export default function QuotationShare() {
 
       {/* 底部安全区域 */}
       <View className='safe-area-bottom' />
+      </ScrollView>
 
       {/* 联系按钮浮动 */}
       {company?.contactPhone && (

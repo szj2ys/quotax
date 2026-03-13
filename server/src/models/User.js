@@ -67,6 +67,12 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true,
   },
+
+  // Analytics - total view count
+  totalViews: {
+    type: Number,
+    default: 0,
+  },
 }, {
   timestamps: true,
 });

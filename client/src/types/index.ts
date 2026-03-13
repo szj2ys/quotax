@@ -5,9 +5,11 @@ export interface UserInfo {
   nickName: string
   avatarUrl: string
   companyName?: string
+  companyLogo?: string
   contactName?: string
   contactPhone?: string
-  companyLogo?: string
+  companyAddress?: string
+  companyIntro?: string
 }
 
 // 产品规格
@@ -72,10 +74,12 @@ export interface FavoriteItem {
 
 // 公司信息
 export interface CompanyInfo {
-  name: string
-  logo?: string
+  companyName: string
+  companyLogo?: string
   contactName?: string
   contactPhone?: string
+  companyAddress?: string
+  companyIntro?: string
 }
 
 // 分页数据

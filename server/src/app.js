@@ -17,6 +17,9 @@ require('dotenv').config();
 // 导入数据库连接
 const { connectDB } = require('./config/database');
 
+// 导入导出清理任务
+const { startCleanupJob } = require('./utils/exportCleanup');
+
 // 导入生产环境配置（生产环境）
 const { productionConfig, validateConfig, setupGracefulShutdown } = process.env.NODE_ENV === 'production'
   ? require('./config/production')
@@ -52,12 +55,16 @@ const quotationRoutes = require('./routes/quotation.routes');
 const orderRoutes = require('./routes/order.routes');
 const qrcodeRoutes = require('./routes/qrcode.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
+const exportRoutes = require('./routes/export.routes');
 
 // 创建 Express 应用
 const app = express();
 
 // 连接数据库
 connectDB();
+
+// 启动导出文件清理定时任务
+const cleanupJob = startCleanupJob();
 
 // 设置 mongoose 用于监控
 setMongoose(mongoose);
@@ -107,6 +114,7 @@ app.use('/api/quotations', quotationRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/qrcode', qrcodeRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/export', exportRoutes);
 
 // 健康检查端点
 app.get('/health', healthCheck);

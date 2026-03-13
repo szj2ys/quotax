@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { View, Text, Image, Button } from '@tarojs/components'
 import {
   showLoading,
@@ -12,6 +12,7 @@ import {
 } from '@tarojs/taro'
 import { getUserInfo, clearAuth, isLoggedIn } from '@/utils/auth'
 import { generateQRCode } from '@/api/qrcode'
+import { getAnalyticsSummary } from '@/api/analytics'
 import './index.scss'
 
 export default function UserPage() {
@@ -19,6 +20,8 @@ export default function UserPage() {
   const [showQRCode, setShowQRCode] = useState(false)
   const [qrCodeUrl, setQrCodeUrl] = useState('')
   const [loggedIn, setLoggedIn] = useState(false)
+  const [todayViews, setTodayViews] = useState(0)
+  const [hasNewData, setHasNewData] = useState(false)
 
   // 管理菜单
   const managementMenuItems = [
@@ -28,6 +31,7 @@ export default function UserPage() {
 
   // 其他菜单
   const otherMenuItems = [
+    { icon: '📊', label: '数据洞察', path: '/pages/analytics/index', badge: hasNewData ? todayViews : 0, showBadge: hasNewData },
     { icon: '🛒', label: '购物车', path: '/pages/cart/index' },
     { icon: '⭐', label: '收藏夹', path: '/pages/favorites/index' },
     { icon: '⚙️', label: '设置', path: '/pages/settings/index' }
@@ -35,7 +39,26 @@ export default function UserPage() {
 
   useDidShow(() => {
     loadUserInfo()
+    if (loggedIn) {
+      loadAnalyticsSummary()
+    }
   })
+
+  useEffect(() => {
+    if (loggedIn) {
+      loadAnalyticsSummary()
+    }
+  }, [loggedIn])
+
+  const loadAnalyticsSummary = async () => {
+    try {
+      const res = await getAnalyticsSummary()
+      setTodayViews(res.today.uv)
+      setHasNewData(res.hasNewData)
+    } catch (error) {
+      console.error('加载数据摘要失败:', error)
+    }
+  }
 
   const loadUserInfo = () => {
     const isUserLoggedIn = isLoggedIn()
@@ -61,6 +84,15 @@ export default function UserPage() {
       return
     }
     navigateTo({ url: path })
+  }
+
+  // 跳转到公司信息
+  const handleCompanyInfo = () => {
+    if (!loggedIn) {
+      showToast({ title: '请先登录', icon: 'none' })
+      return
+    }
+    navigateTo({ url: '/pages/settings/company/index' })
   }
 
   // 生成小程序码
@@ -168,6 +200,11 @@ export default function UserPage() {
             <Text className='company-name'>
               {userInfo?.companyName || (loggedIn ? '暂未设置公司' : '点击登录查看更多功能')}
             </Text>
+            {loggedIn && hasNewData && (
+              <Text className='analytics-preview'>
+                今日 {todayViews} 人查看你的报价
+              </Text>
+            )}
           </View>
           {!loggedIn && (
             <Button
@@ -234,6 +271,43 @@ export default function UserPage() {
         ))}
       </View>
 
+      {/* 公司信息区域 */}
+      <View className='menu-section'>
+        <View className='menu-header'>
+          <Text className='menu-title'>公司信息</Text>
+        </View>
+        <View
+          className={`menu-item company-menu-item ${!loggedIn ? 'disabled' : ''}`}
+          onClick={handleCompanyInfo}
+        >
+          <Text className='menu-icon'>🏢</Text>
+          <View className='menu-content'>
+            <Text className='menu-label'>
+              {userInfo?.companyName || '公司信息'}
+            </Text>
+            {loggedIn && userInfo?.companyName ? (
+              <Text className='menu-subtitle'>点击编辑公司信息</Text>
+            ) : (
+              <Text className='menu-subtitle'>设置公司名称、联系方式等</Text>
+            )}
+          </View>
+          <Text className='menu-arrow'>›</Text>
+        </View>
+        {/* 公司信息摘要 */}
+        {loggedIn && (
+          <View className='company-summary'>
+            <View className='company-summary-item'>
+              <Text className='summary-icon'>👤</Text>
+              <Text className='summary-text'>{userInfo?.contactName || '未设置联系人'}</Text>
+            </View>
+            <View className='company-summary-item'>
+              <Text className='summary-icon'>📱</Text>
+              <Text className='summary-text'>{userInfo?.contactPhone || '未设置电话'}</Text>
+            </View>
+          </View>
+        )}
+      </View>
+
       {/* 其他功能区域 */}
       <View className='menu-section'>
         <View className='menu-header'>
@@ -246,7 +320,14 @@ export default function UserPage() {
             onClick={() => handleNavigate(item.path)}
           >
             <Text className='menu-icon'>{item.icon}</Text>
-            <Text className='menu-label'>{item.label}</Text>
+            <View className='menu-content'>
+              <Text className='menu-label'>{item.label}</Text>
+            </View>
+            {item.showBadge && item.badge > 0 && (
+              <View className='menu-badge'>
+                <Text className='badge-text'>{item.badge > 99 ? '99+' : item.badge}</Text>
+              </View>
+            )}
             <Text className='menu-arrow'>›</Text>
           </View>
         ))}
