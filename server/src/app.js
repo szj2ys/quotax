@@ -9,12 +9,38 @@ const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const path = require('path');
+const mongoose = require('mongoose');
 
 // 加载环境变量
 require('dotenv').config();
 
 // 导入数据库连接
 const { connectDB } = require('./config/database');
+
+// 导入生产环境配置（生产环境）
+const { productionConfig, validateConfig, setupGracefulShutdown } = process.env.NODE_ENV === 'production'
+  ? require('./config/production')
+  : { productionConfig: null, validateConfig: () => {}, setupGracefulShutdown: () => {} };
+
+// 导入监控中间件
+const {
+  requestMonitor,
+  healthCheck,
+  detailedHealthCheck,
+  metricsEndpoint,
+  alertsEndpoint,
+  setMongoose
+} = require('./middleware/monitor');
+
+// 生产环境验证配置
+if (process.env.NODE_ENV === 'production') {
+  try {
+    validateConfig();
+  } catch (error) {
+    console.error('配置验证失败:', error.message);
+    process.exit(1);
+  }
+}
 
 // 导入路由
 const authRoutes = require('./routes/auth.routes');
@@ -25,12 +51,16 @@ const favoriteRoutes = require('./routes/favorite.routes');
 const quotationRoutes = require('./routes/quotation.routes');
 const orderRoutes = require('./routes/order.routes');
 const qrcodeRoutes = require('./routes/qrcode.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
 
 // 创建 Express 应用
 const app = express();
 
 // 连接数据库
 connectDB();
+
+// 设置 mongoose 用于监控
+setMongoose(mongoose);
 
 // 安全中间件
 app.use(helmet());
@@ -45,11 +75,19 @@ app.use(cors({
 // 压缩响应
 app.use(compression());
 
+// 请求监控中间件
+app.use(requestMonitor);
+
 // 请求日志
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 } else {
-  app.use(morgan('combined'));
+  const logger = productionConfig?.logger || console;
+  app.use(morgan('combined', {
+    stream: {
+      write: (message) => logger.info(message.trim())
+    }
+  }));
 }
 
 // 解析请求体
@@ -68,19 +106,13 @@ app.use('/api/favorites', favoriteRoutes);
 app.use('/api/quotations', quotationRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/qrcode', qrcodeRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
-// 健康检查
-app.get('/health', (req, res) => {
-  res.json({
-    code: 200,
-    message: 'success',
-    data: {
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime()
-    }
-  });
-});
+// 健康检查端点
+app.get('/health', healthCheck);
+app.get('/health/detail', detailedHealthCheck);
+app.get('/health/alerts', alertsEndpoint);
+app.get('/metrics', metricsEndpoint);
 
 // 404 处理
 app.use((req, res) => {
@@ -130,9 +162,15 @@ app.use((err, req, res, next) => {
 // 启动服务器
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`服务器运行在端口 ${PORT}`);
   console.log(`环境: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`健康检查: http://localhost:${PORT}/health`);
 });
+
+// 生产环境设置优雅关闭
+if (process.env.NODE_ENV === 'production') {
+  setupGracefulShutdown(server, mongoose);
+}
 
 module.exports = app;

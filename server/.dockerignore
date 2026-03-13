@@ -1,0 +1,61 @@
+# 构建忽略文件
+# Build ignore patterns
+
+# 依赖
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# 开发环境
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+
+# 日志
+logs
+*.log
+
+# 测试
+coverage
+.nyc_output
+*.test.js
+*.spec.js
+__tests__
+__mocks__
+jest.config.js
+
+# 版本控制
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 文档
+*.md
+!README.md
+DEPLOY.md
+API.md
+PRD.md
+
+# 其他
+.github
+.travis.yml
+.eslintrc
+.prettierrc
+.editorconfig
+
+# 上传文件（会被挂载为卷）
+uploads/*
+!uploads/.gitkeep

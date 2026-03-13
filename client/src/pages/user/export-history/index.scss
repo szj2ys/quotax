@@ -1,0 +1,211 @@
+@import '../../../app.scss';
+
+.export-history-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+
+  // 顶部导航
+  .nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20rpx 30rpx;
+    background: #fff;
+    border-bottom: 1rpx solid #f0f0f0;
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60rpx;
+      height: 60rpx;
+
+      .back-icon {
+        font-size: 36rpx;
+        color: #333;
+      }
+    }
+
+    .nav-title {
+      flex: 1;
+      text-align: center;
+      font-size: 34rpx;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .nav-placeholder {
+      width: 60rpx;
+    }
+  }
+
+  // 滚动区域
+  .history-scroll {
+    height: calc(100vh - 100rpx);
+  }
+
+  // 历史列表
+  .history-list {
+    padding: 20rpx;
+
+    .history-item {
+      background: #fff;
+      border-radius: 16rpx;
+      padding: 24rpx;
+      margin-bottom: 20rpx;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+
+      .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20rpx;
+        padding-bottom: 20rpx;
+        border-bottom: 1rpx solid #f0f0f0;
+
+        .file-type {
+          display: flex;
+          align-items: center;
+          gap: 12rpx;
+
+          .type-icon {
+            font-size: 36rpx;
+          }
+
+          .type-label {
+            font-size: 30rpx;
+            font-weight: 500;
+            color: #333;
+          }
+        }
+
+        .status-badge {
+          padding: 6rpx 16rpx;
+          border-radius: 20rpx;
+          font-size: 22rpx;
+
+          &.valid {
+            background: #f6ffed;
+            color: #52c41a;
+          }
+
+          &.expired {
+            background: #f5f5f5;
+            color: #999;
+          }
+
+          .status-text {
+            font-weight: 500;
+          }
+        }
+      }
+
+      .item-info {
+        margin-bottom: 20rpx;
+
+        .info-row {
+          display: flex;
+          margin-bottom: 12rpx;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .info-label {
+            font-size: 26rpx;
+            color: #999;
+            width: 140rpx;
+          }
+
+          .info-value {
+            flex: 1;
+            font-size: 26rpx;
+            color: #666;
+          }
+        }
+      }
+
+      .item-actions {
+        display: flex;
+        justify-content: flex-end;
+
+        .action-btn {
+          padding: 12rpx 28rpx;
+          border-radius: 30rpx;
+          font-size: 26rpx;
+
+          &.primary {
+            background: #1890ff;
+            color: #fff;
+
+            &:active {
+              background: #096dd9;
+            }
+          }
+
+          &.disabled {
+            background: #f5f5f5;
+            color: #999;
+          }
+
+          .action-text {
+            font-weight: 500;
+          }
+        }
+      }
+    }
+
+    // 加载更多
+    .load-more {
+      text-align: center;
+      padding: 30rpx;
+
+      .load-text {
+        font-size: 26rpx;
+        color: #999;
+      }
+    }
+
+    .no-more {
+      text-align: center;
+      padding: 30rpx;
+
+      .no-more-text {
+        font-size: 24rpx;
+        color: #999;
+      }
+    }
+  }
+
+  // 空状态
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 200rpx 40rpx;
+
+    .empty-icon {
+      font-size: 120rpx;
+      margin-bottom: 30rpx;
+    }
+
+    .empty-text {
+      font-size: 32rpx;
+      color: #666;
+      margin-bottom: 16rpx;
+    }
+
+    .empty-hint {
+      font-size: 26rpx;
+      color: #999;
+    }
+  }
+
+  // 底部安全区域
+  .safe-area-bottom {
+    height: constant(safe-area-inset-bottom);
+    height: env(safe-area-inset-bottom);
+    min-height: 20rpx;
+  }
+}

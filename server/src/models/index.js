@@ -7,6 +7,8 @@ const Category = require('./Category');
 const Product = require('./Product');
 const Cart = require('./Cart');
 const Favorite = require('./Favorite');
+const ViewLog = require('./ViewLog');
+const Export = require('./Export');
 
 module.exports = {
   User,
@@ -14,4 +16,6 @@ module.exports = {
   Product,
   Cart,
   Favorite,
+  ViewLog,
+  Export,
 };

@@ -1,0 +1,427 @@
+.analytics-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+// Header
+.analytics-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 88px;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 100;
+}
+
+.header-back {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.back-icon {
+  font-size: 40px;
+  color: #fff;
+  font-weight: 300;
+}
+
+.header-title {
+  flex: 1;
+  font-size: 34px;
+  color: #fff;
+  font-weight: 500;
+  text-align: center;
+  margin-right: 70px;
+}
+
+// Content
+.analytics-content {
+  padding-top: 88px;
+  padding-bottom: 40px;
+}
+
+// Summary Section
+.summary-section {
+  padding: 20px;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  border-radius: 0 0 24px 24px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.card-label {
+  font-size: 26px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.card-numbers {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.number-item {
+  flex: 1;
+  text-align: center;
+}
+
+.number-value {
+  font-size: 56px;
+  font-weight: 700;
+  color: #fff;
+  display: block;
+  line-height: 1.2;
+}
+
+.number-label {
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 8px;
+  display: block;
+}
+
+.number-divider {
+  width: 2px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.stats-row {
+  display: flex;
+  gap: 12px;
+}
+
+.stat-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 600;
+  color: #fff;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+// Section Cards
+.section-card {
+  background: #fff;
+  margin: 0 20px 20px;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.section-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.section-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #333;
+}
+
+// Trend Chart
+.trend-chart {
+  padding-top: 10px;
+}
+
+.chart-container {
+  display: flex;
+  height: 180px;
+}
+
+.y-axis {
+  width: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-right: 10px;
+}
+
+.y-label {
+  font-size: 20px;
+  color: #999;
+}
+
+.bars-container {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding-left: 10px;
+}
+
+.bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bar-wrapper {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  height: 120px;
+}
+
+.bar {
+  width: 14px;
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+}
+
+.pv-bar {
+  background: linear-gradient(180deg, #1890ff 0%, #40a9ff 100%);
+}
+
+.uv-bar {
+  background: linear-gradient(180deg, #52c41a 0%, #73d13d 100%);
+}
+
+.x-label {
+  font-size: 18px;
+  color: #999;
+  margin-top: 8px;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.pv-dot {
+  background: #1890ff;
+}
+
+.uv-dot {
+  background: #52c41a;
+}
+
+.legend-text {
+  font-size: 22px;
+  color: #666;
+}
+
+// Visit List
+.visit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.visit-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.visit-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-text {
+  font-size: 32px;
+}
+
+.visit-info {
+  flex: 1;
+}
+
+.visit-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.visit-location {
+  font-size: 28px;
+  color: #333;
+  font-weight: 500;
+}
+
+.visit-time {
+  font-size: 22px;
+  color: #999;
+}
+
+.visit-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.visit-stat {
+  font-size: 22px;
+  color: #666;
+  background: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+// Product Rank List
+.product-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.rank-number {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffec3d 100%);
+}
+
+.rank-2 {
+  background: linear-gradient(135deg, #c0c0c0 0%, #d9d9d9 100%);
+}
+
+.rank-3 {
+  background: linear-gradient(135deg, #cd7f32 0%, #d48806 100%);
+}
+
+.rank-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.rank-number:not(.rank-1):not(.rank-2):not(.rank-3) {
+  background: #f0f0f0;
+}
+
+.rank-number:not(.rank-1):not(.rank-2):not(.rank-3) .rank-text {
+  color: #999;
+}
+
+.rank-product-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-img,
+.product-img-placeholder {
+  font-size: 40px;
+}
+
+.rank-product-info {
+  flex: 1;
+}
+
+.rank-product-name {
+  font-size: 28px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.rank-product-clicks {
+  font-size: 24px;
+  color: #1890ff;
+}
+
+// Empty State
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-text {
+  font-size: 26px;
+  color: #999;
+}
+
+// Footer
+.analytics-footer {
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 22px;
+  color: #999;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.footer-privacy {
+  font-size: 20px;
+  color: #ccc;
+}
