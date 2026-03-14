@@ -50,10 +50,25 @@ const createLogEntry = (level, message, metadata = {}) => {
 };
 
 /**
- * Write log to output
+ * Write log to appropriate console output based on level
  */
 const writeLog = (entry) => {
-  console.log(JSON.stringify(entry));
+  const level = entry.level;
+  const output = JSON.stringify(entry);
+
+  switch (level) {
+    case 'ERROR':
+      console.error(output);
+      break;
+    case 'WARN':
+      console.warn(output);
+      break;
+    case 'DEBUG':
+      console.debug ? console.debug(output) : console.log(output);
+      break;
+    default:
+      console.log(output);
+  }
 };
 
 /**
