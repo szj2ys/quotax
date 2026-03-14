@@ -20,6 +20,9 @@ const { connectDB } = require('./config/database');
 // 导入导出清理任务
 const { startCleanupJob } = require('./utils/exportCleanup');
 
+// 导入数据日报定时任务
+const { startDigestJobs } = require('./utils/digestCron');
+
 // 导入生产环境配置（生产环境）
 const { productionConfig, validateConfig, setupGracefulShutdown } = process.env.NODE_ENV === 'production'
   ? require('./config/production')
@@ -58,6 +61,7 @@ const analyticsRoutes = require('./routes/analytics.routes');
 const exportRoutes = require('./routes/export.routes');
 const shareRoutes = require('./routes/share.routes');
 const leadsRoutes = require('./routes/leads.routes');
+const notificationRoutes = require('./routes/notification.routes');
 
 // 创建 Express 应用
 const app = express();
@@ -67,6 +71,9 @@ connectDB();
 
 // 启动导出文件清理定时任务
 const cleanupJob = startCleanupJob();
+
+// 启动数据日报定时任务
+startDigestJobs();
 
 // 设置 mongoose 用于监控
 setMongoose(mongoose);
@@ -119,6 +126,7 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/shares', shareRoutes);
 app.use('/api/leads', leadsRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 健康检查端点
 app.get('/health', healthCheck);

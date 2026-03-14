@@ -46,6 +46,32 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  email: {
+    type: String,
+    default: '',
+    trim: true,
+    lowercase: true,
+  },
+
+  // Notification Preferences
+  notificationPreferences: {
+    daily: {
+      type: Boolean,
+      default: true,
+    },
+    weekly: {
+      type: Boolean,
+      default: true,
+    },
+    monthly: {
+      type: Boolean,
+      default: true,
+    },
+    newLead: {
+      type: Boolean,
+      default: true,
+    },
+  },
 
   // Account status
   status: {
@@ -91,6 +117,8 @@ userSchema.methods.getPublicProfile = function() {
     companyDescription: this.companyDescription,
     contactName: this.contactName,
     contactPhone: this.contactPhone,
+    email: this.email,
+    notificationPreferences: this.notificationPreferences,
     slug: this.slug,
   };
 };

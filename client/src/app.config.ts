@@ -14,7 +14,9 @@ export default {
     'pages/quotation/product/index',
     'pages/analytics/index',
     'pages/favorites/index',
-    'pages/leads/index'
+    'pages/leads/index',
+    'pages/settings/index',
+    'pages/settings/notifications/index'
   ],
   tabBar: {
     color: '#8c8c8c',

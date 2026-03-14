@@ -1,0 +1,166 @@
+.notification-settings-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40px;
+
+  .section {
+    background-color: #fff;
+    margin-bottom: 20px;
+    padding: 24px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .section-header {
+    margin-bottom: 24px;
+
+    .section-title {
+      display: block;
+      font-size: 32px;
+      font-weight: 600;
+      color: #262626;
+      margin-bottom: 8px;
+    }
+
+    .section-desc {
+      display: block;
+      font-size: 26px;
+      color: #8c8c8c;
+    }
+  }
+
+  .form-item {
+    .form-label {
+      display: block;
+      font-size: 28px;
+      color: #595959;
+      margin-bottom: 16px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 88px;
+      padding: 0 24px;
+      background-color: #f5f5f5;
+      border-radius: 12px;
+      font-size: 28px;
+      color: #262626;
+      box-sizing: border-box;
+
+      &::placeholder {
+        color: #bfbfbf;
+      }
+    }
+  }
+
+  .preference-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    .preference-info {
+      flex: 1;
+      margin-right: 24px;
+
+      .preference-name {
+        display: block;
+        font-size: 30px;
+        color: #262626;
+        margin-bottom: 8px;
+      }
+
+      .preference-desc {
+        display: block;
+        font-size: 24px;
+        color: #8c8c8c;
+      }
+    }
+
+    .preference-switch {
+      flex-shrink: 0;
+    }
+  }
+
+  .test-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .test-btn {
+      flex: 1;
+      min-width: 180px;
+      height: 72px;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      border: none;
+
+      &:active {
+        background-color: #e0e0e0;
+      }
+
+      &[disabled] {
+        opacity: 0.6;
+      }
+
+      .btn-text {
+        font-size: 26px;
+        color: #595959;
+      }
+    }
+  }
+
+  .save-section {
+    padding: 40px 32px;
+    background-color: #fff;
+
+    .save-btn {
+      width: 100%;
+      height: 96px;
+      background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+      border-radius: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      border: none;
+
+      &:active {
+        opacity: 0.9;
+      }
+
+      &[disabled] {
+        opacity: 0.6;
+      }
+
+      .save-btn-text {
+        font-size: 32px;
+        color: #fff;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .safe-area-bottom {
+    height: env(safe-area-inset-bottom);
+    min-height: 20px;
+  }
+}
