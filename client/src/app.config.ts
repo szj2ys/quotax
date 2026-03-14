@@ -13,7 +13,8 @@ export default {
     'pages/quotation/share/index',
     'pages/quotation/product/index',
     'pages/analytics/index',
-    'pages/favorites/index'
+    'pages/favorites/index',
+    'pages/leads/index'
   ],
   tabBar: {
     color: '#8c8c8c',

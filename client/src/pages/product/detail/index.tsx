@@ -6,6 +6,7 @@ import { addToCart } from '@/api/cart'
 import { getUserInfo } from '@/utils/auth'
 import { generateQRCode } from '@/api/qrcode'
 import SharePoster from '@/components/SharePoster'
+import LeadForm from '@/components/LeadForm'
 import type { Product, ProductSpec } from '@/types'
 import './index.scss'
 
@@ -17,6 +18,7 @@ export default function ProductDetailPage() {
   const [showSharePoster, setShowSharePoster] = useState(false)
   const [qrCodeUrl, setQrCodeUrl] = useState('')
   const [userInfo, setUserInfo] = useState<any>(null)
+  const [showLeadForm, setShowLeadForm] = useState(false)
 
   useEffect(() => {
     const instance = getCurrentInstance()
@@ -268,8 +270,8 @@ export default function ProductDetailPage() {
           <View className='cart-btn' onClick={handleAddToCart}>
             <Text>加入购物车</Text>
           </View>
-          <View className='inquiry-btn' onClick={handleInquiry}>
-            <Text>立即询价</Text>
+          <View className='inquiry-btn' onClick={() => setShowLeadForm(true)}>
+            <Text>我要询价</Text>
           </View>
         </View>
       </View>
@@ -282,6 +284,19 @@ export default function ProductDetailPage() {
           userInfo={userInfo || {}}
           qrCodeUrl={qrCodeUrl}
           onClose={() => setShowSharePoster(false)}
+        />
+      )}
+
+      {/* 询价表单弹窗 */}
+      {product && (
+        <LeadForm
+          visible={showLeadForm}
+          productId={product._id}
+          productName={product.name}
+          onClose={() => setShowLeadForm(false)}
+          onSuccess={() => {
+            showToast({ title: '询价提交成功', icon: 'success' })
+          }}
         />
       )}
     </View>
