@@ -7,7 +7,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
-const morgan = require('morgan');
 const path = require('path');
 const mongoose = require('mongoose');
 
@@ -30,13 +29,16 @@ const { productionConfig, validateConfig, setupGracefulShutdown } = process.env.
 
 // 导入监控中间件
 const {
-  requestMonitor,
-  healthCheck,
-  detailedHealthCheck,
-  metricsEndpoint,
   alertsEndpoint,
   setMongoose
 } = require('./middleware/monitor');
+
+// 导入新监控中间件
+const { requestLogger, attachLogger } = require('./middleware/logger');
+const { metricsMiddleware, metricsEndpoint } = require('./middleware/metrics');
+
+// 导入错误处理中间件
+const { errorHandler, notFound } = require('./middleware/error.middleware');
 
 // 生产环境验证配置
 if (process.env.NODE_ENV === 'production') {
@@ -62,6 +64,7 @@ const exportRoutes = require('./routes/export.routes');
 const shareRoutes = require('./routes/share.routes');
 const leadsRoutes = require('./routes/leads.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const healthRoutes = require('./routes/health.routes');
 
 // 创建 Express 应用
 const app = express();
@@ -91,20 +94,12 @@ app.use(cors({
 // 压缩响应
 app.use(compression());
 
-// 请求监控中间件
-app.use(requestMonitor);
+// 请求日志中间件（JSON格式，带请求ID）
+app.use(requestLogger);
+app.use(attachLogger);
 
-// 请求日志
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'));
-} else {
-  const logger = productionConfig?.logger || console;
-  app.use(morgan('combined', {
-    stream: {
-      write: (message) => logger.info(message.trim())
-    }
-  }));
-}
+// 请求指标收集中间件
+app.use(metricsMiddleware);
 
 // 解析请求体
 app.use(express.json({ limit: '10mb' }));
@@ -129,55 +124,16 @@ app.use('/api/leads', leadsRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 // 健康检查端点
-app.get('/health', healthCheck);
+app.use('/health', healthRoutes);
 app.get('/health/detail', detailedHealthCheck);
 app.get('/health/alerts', alertsEndpoint);
 app.get('/metrics', metricsEndpoint);
 
 // 404 处理
-app.use((req, res) => {
-  res.status(404).json({
-    code: 404,
-    message: '接口不存在',
-    data: null
-  });
-});
+app.use(notFound);
 
 // 全局错误处理
-app.use((err, req, res, next) => {
-  console.error('服务器错误:', err);
-
-  // 处理特定类型的错误
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({
-      code: 400,
-      message: '数据验证失败',
-      data: err.message
-    });
-  }
-
-  if (err.name === 'CastError') {
-    return res.status(400).json({
-      code: 400,
-      message: '无效的 ID 格式',
-      data: null
-    });
-  }
-
-  if (err.name === 'UnauthorizedError') {
-    return res.status(401).json({
-      code: 401,
-      message: '未授权访问',
-      data: null
-    });
-  }
-
-  res.status(err.status || 500).json({
-    code: err.status || 500,
-    message: err.message || '服务器内部错误',
-    data: null
-  });
-});
+app.use(errorHandler);
 
 // 启动服务器
 const PORT = process.env.PORT || 3000;
