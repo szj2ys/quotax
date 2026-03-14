@@ -663,4 +663,139 @@ describe('Search API', () => {
       });
     });
   });
+
+  describe('GET /api/products/suggestions', () => {
+    it('should return matching suggestions when keyword provided', async () => {
+      const mockSuggestions = [
+        { name: 'iPhone 14 Pro' },
+        { name: 'iPhone 14' },
+        { name: 'iPhone 13' },
+      ];
+
+      Product.find.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          limit: jest.fn().mockReturnValue({
+            lean: jest.fn().mockResolvedValue(mockSuggestions),
+          }),
+        }),
+      });
+
+      const response = await request(app)
+        .get('/api/products/suggestions')
+        .query({ keyword: 'iph' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.code).toBe(200);
+      expect(response.body.data).toContain('iPhone 14 Pro');
+      expect(response.body.data).toContain('iPhone 14');
+    });
+
+    it('should return empty array when keyword is empty', async () => {
+      const response = await request(app)
+        .get('/api/products/suggestions')
+        .query({ keyword: '' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.code).toBe(200);
+      expect(response.body.data).toEqual([]);
+    });
+
+    it('should return empty array when keyword is whitespace', async () => {
+      const response = await request(app)
+        .get('/api/products/suggestions')
+        .query({ keyword: '   ' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.code).toBe(200);
+      expect(response.body.data).toEqual([]);
+    });
+
+    it('should return empty array when no matches found', async () => {
+      Product.find.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          limit: jest.fn().mockReturnValue({
+            lean: jest.fn().mockResolvedValue([]),
+          }),
+        }),
+      });
+
+      const response = await request(app)
+        .get('/api/products/suggestions')
+        .query({ keyword: 'xyznonexistent' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.code).toBe(200);
+      expect(response.body.data).toEqual([]);
+    });
+
+    it('should return unique product names only', async () => {
+      const mockSuggestions = [
+        { name: 'iPhone 14' },
+        { name: 'iPhone 14' },
+        { name: 'iPhone 13' },
+      ];
+
+      Product.find.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          limit: jest.fn().mockReturnValue({
+            lean: jest.fn().mockResolvedValue(mockSuggestions),
+          }),
+        }),
+      });
+
+      const response = await request(app)
+        .get('/api/products/suggestions')
+        .query({ keyword: 'iph' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data).toContain('iPhone 14');
+      expect(response.body.data).toContain('iPhone 13');
+    });
+
+    it('should limit suggestions to 8 items', async () => {
+      const mockSuggestions = Array(10).fill(null).map((_, i) => ({
+        name: `Product ${i + 1}`,
+      }));
+
+      const limitMock = jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mockSuggestions.slice(0, 8)),
+      });
+
+      Product.find.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          limit: limitMock,
+        }),
+      });
+
+      await request(app)
+        .get('/api/products/suggestions')
+        .query({ keyword: 'pro' });
+
+      expect(limitMock).toHaveBeenCalledWith(8);
+    });
+
+    it('should only return products with status on', async () => {
+      const mockSuggestions = [{ name: 'iPhone 14' }];
+
+      Product.find.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          limit: jest.fn().mockReturnValue({
+            lean: jest.fn().mockResolvedValue(mockSuggestions),
+          }),
+        }),
+      });
+
+      const response = await request(app)
+        .get('/api/products/suggestions')
+        .query({ keyword: 'iph' });
+
+      expect(response.status).toBe(200);
+      expect(Product.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'on',
+        })
+      );
+    });
+  });
 });

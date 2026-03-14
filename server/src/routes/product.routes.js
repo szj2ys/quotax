@@ -250,6 +250,53 @@ router.get('/search', async (req, res) => {
 });
 
 /**
+ * @route   GET /api/products/suggestions
+ * @desc    搜索建议（基于关键词前缀匹配）
+ * @access  Public
+ */
+router.get('/suggestions', async (req, res) => {
+  try {
+    const { keyword } = req.query;
+
+    // 空关键词返回空数组
+    if (!keyword || keyword.trim() === '') {
+      return res.json({
+        code: 200,
+        message: 'success',
+        data: []
+      });
+    }
+
+    const trimmedKeyword = keyword.trim();
+
+    // 使用正则表达式进行前缀匹配搜索
+    const suggestions = await Product.find({
+      name: { $regex: trimmedKeyword, $options: 'i' },
+      status: 'on'
+    })
+      .select('name')
+      .limit(8)
+      .lean();
+
+    // 提取唯一的产品名称
+    const uniqueNames = [...new Set(suggestions.map(p => p.name))];
+
+    res.json({
+      code: 200,
+      message: 'success',
+      data: uniqueNames
+    });
+  } catch (error) {
+    console.error('Get search suggestions error:', error);
+    res.status(500).json({
+      code: 500,
+      message: '获取搜索建议失败',
+      data: null
+    });
+  }
+});
+
+/**
  * @route   GET /api/products/:id
  * @desc    获取产品详情
  * @access  Public
