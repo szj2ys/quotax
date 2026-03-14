@@ -3,6 +3,13 @@
   background: #f5f5f5;
   padding-bottom: 20px;
 
+  // 搜索栏区域
+  .search-section {
+    background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+    padding: 16px;
+    padding-bottom: 24px;
+  }
+
   // 公司信息头部
   .company-header {
     background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);

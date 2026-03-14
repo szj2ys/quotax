@@ -1,6 +1,7 @@
 export default {
   pages: [
     'pages/index/index',
+    'pages/search/index',
     'pages/product/index',
     'pages/product/detail/index',
     'pages/product/manage/index',

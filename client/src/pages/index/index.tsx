@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { View, Text, Image, Swiper, SwiperItem, ScrollView } from '@tarojs/components'
 import { navigateTo, showToast, usePullDownRefresh, stopPullDownRefresh, useShareAppMessage } from '@tarojs/taro'
 import ProductCard from '@/components/ProductCard'
+import SearchBar from '@/components/SearchBar'
 import { getCategoryList, getProductList, addToCart } from '@/api'
 import { getUserInfo } from '@/utils/auth'
 import type { Category, Product } from '@/types'
@@ -116,6 +117,11 @@ export default function Index() {
 
   return (
     <View className='index-page'>
+      {/* 搜索栏 */}
+      <View className='search-section'>
+        <SearchBar placeholder='搜索产品名称' />
+      </View>
+
       {/* 公司信息头部 */}
       <View className='company-header'>
         <View className='company-info'>

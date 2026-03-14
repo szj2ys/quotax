@@ -1,0 +1,268 @@
+.search-bar {
+  position: relative;
+  z-index: 100;
+
+  &.focused {
+    .search-input-wrapper {
+      box-shadow: 0 2rpx 8rpx rgba(24, 144, 255, 0.2);
+    }
+  }
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  height: 80rpx;
+  background: #f5f5f5;
+  border-radius: 40rpx;
+  padding: 0 20rpx;
+  transition: box-shadow 0.2s;
+}
+
+.search-icon {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12rpx;
+
+  .icon {
+    font-size: 28rpx;
+    color: #999;
+  }
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  font-size: 28rpx;
+  color: #333;
+  background: transparent;
+  border: none;
+
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.clear-btn {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12rpx;
+
+  .clear-icon {
+    width: 32rpx;
+    height: 32rpx;
+    line-height: 32rpx;
+    text-align: center;
+    background: #ccc;
+    border-radius: 50%;
+    font-size: 24rpx;
+    color: #fff;
+  }
+}
+
+.search-btn {
+  height: 60rpx;
+  padding: 0 24rpx;
+  margin-left: 12rpx;
+  background: #1890ff;
+  border-radius: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .search-btn-text {
+    font-size: 26rpx;
+    color: #fff;
+  }
+}
+
+/* 下拉框样式 */
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.dropdown-section {
+  padding: 20rpx 0;
+
+  &:not(:last-child) {
+    border-bottom: 1rpx solid #f0f0f0;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24rpx 16rpx;
+
+  .section-title {
+    font-size: 26rpx;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .clear-all-btn {
+    font-size: 24rpx;
+    color: #999;
+
+    &:active {
+      color: #666;
+    }
+  }
+}
+
+.section-title {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #333;
+  padding: 0 24rpx 16rpx;
+}
+
+/* 搜索建议列表 */
+.suggestions-list {
+  padding: 0 24rpx;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  .suggestion-icon {
+    width: 40rpx;
+    height: 40rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16rpx;
+    font-size: 24rpx;
+    color: #999;
+  }
+
+  .suggestion-text {
+    flex: 1;
+    font-size: 28rpx;
+    color: #333;
+  }
+}
+
+/* 搜索历史列表 */
+.history-list {
+  padding: 0 24rpx;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  .history-icon {
+    width: 40rpx;
+    height: 40rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16rpx;
+    font-size: 24rpx;
+    color: #999;
+  }
+
+  .history-text {
+    flex: 1;
+    font-size: 28rpx;
+    color: #333;
+  }
+
+  .history-delete {
+    width: 48rpx;
+    height: 48rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:active {
+      opacity: 0.7;
+    }
+
+    .delete-icon {
+      font-size: 32rpx;
+      color: #ccc;
+    }
+  }
+}
+
+/* 热门搜索列表 */
+.hot-list {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 24rpx;
+}
+
+.hot-item {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 20rpx;
+  margin-right: 16rpx;
+  margin-bottom: 16rpx;
+  background: #f5f5f5;
+  border-radius: 28rpx;
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  .hot-rank {
+    width: 32rpx;
+    height: 32rpx;
+    line-height: 32rpx;
+    text-align: center;
+    margin-right: 8rpx;
+    border-radius: 4rpx;
+    font-size: 22rpx;
+    color: #999;
+    background: #e8e8e8;
+  }
+
+  .hot-text {
+    font-size: 26rpx;
+    color: #333;
+  }
+
+  // 前三名特殊样式
+  &:nth-child(1) .hot-rank {
+    background: #ff4d4f;
+    color: #fff;
+  }
+
+  &:nth-child(2) .hot-rank {
+    background: #ff7a45;
+    color: #fff;
+  }
+
+  &:nth-child(3) .hot-rank {
+    background: #ffa940;
+    color: #fff;
+  }
+}
