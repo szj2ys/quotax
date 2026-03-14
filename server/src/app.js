@@ -56,6 +56,7 @@ const orderRoutes = require('./routes/order.routes');
 const qrcodeRoutes = require('./routes/qrcode.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const exportRoutes = require('./routes/export.routes');
+const shareRoutes = require('./routes/share.routes');
 
 // 创建 Express 应用
 const app = express();
@@ -115,6 +116,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/qrcode', qrcodeRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/export', exportRoutes);
+app.use('/api/shares', shareRoutes);
 
 // 健康检查端点
 app.get('/health', healthCheck);

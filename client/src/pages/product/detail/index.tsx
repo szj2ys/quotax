@@ -1,8 +1,11 @@
 import { View, Text, Image, ScrollView, Swiper, SwiperItem } from '@tarojs/components'
-import Taro, { navigateBack, getCurrentInstance, showLoading, hideLoading, showToast, navigateTo } from '@tarojs/taro'
+import Taro, { navigateBack, getCurrentInstance, showLoading, hideLoading, showToast, navigateTo, useShareAppMessage, useShareTimeline } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import { getProductDetail } from '@/api/product'
 import { addToCart } from '@/api/cart'
+import { getUserInfo } from '@/utils/auth'
+import { generateQRCode } from '@/api/qrcode'
+import SharePoster from '@/components/SharePoster'
 import type { Product, ProductSpec } from '@/types'
 import './index.scss'
 
@@ -11,6 +14,9 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(false)
   const [currentImage, setCurrentImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const [showSharePoster, setShowSharePoster] = useState(false)
+  const [qrCodeUrl, setQrCodeUrl] = useState('')
+  const [userInfo, setUserInfo] = useState<any>(null)
 
   useEffect(() => {
     const instance = getCurrentInstance()
@@ -20,6 +26,10 @@ export default function ProductDetailPage() {
     if (productId) {
       fetchProductDetail(productId)
     }
+
+    // Load user info for share
+    const user = getUserInfo()
+    setUserInfo(user)
   }, [])
 
   const fetchProductDetail = async (id: string) => {
@@ -80,6 +90,47 @@ export default function ProductDetailPage() {
     }
   }
 
+  // 分享配置 - 分享给朋友
+  useShareAppMessage(() => {
+    if (!product) return {}
+    return {
+      title: `${product.name} - ¥${product.price}/${product.unit}`,
+      path: `/pages/product/detail/index?id=${product._id}&ref=${userInfo?.id || ''}`,
+      imageUrl: product.images?.[0] || ''
+    }
+  })
+
+  // 分享配置 - 分享到朋友圈
+  useShareTimeline(() => {
+    if (!product) return {}
+    return {
+      title: `${product.name} - ¥${product.price}/${product.unit}`,
+      query: `id=${product._id}&ref=${userInfo?.id || ''}`,
+      imageUrl: product.images?.[0] || ''
+    }
+  })
+
+  // 打开分享海报
+  const handleShare = async () => {
+    if (!product) return
+
+    showLoading({ title: '生成二维码...' })
+    try {
+      const qrRes = await generateQRCode({
+        scene: `id=${product._id}`,
+        page: 'pages/product/detail/index',
+        width: 200
+      })
+      setQrCodeUrl(qrRes.qrCodeUrl)
+      setShowSharePoster(true)
+    } catch (error) {
+      console.error('生成二维码失败:', error)
+      showToast({ title: '生成二维码失败', icon: 'none' })
+    } finally {
+      hideLoading()
+    }
+  }
+
   if (loading || !product) {
     return (
       <View className='product-detail-page'>
@@ -98,7 +149,9 @@ export default function ProductDetailPage() {
           <Text className='back-icon'>←</Text>
         </View>
         <Text className='nav-title'>产品详情</Text>
-        <View className='nav-placeholder' />
+        <View className='share-btn' onClick={handleShare}>
+          <Text className='share-icon'>📤</Text>
+        </View>
       </View>
 
       <ScrollView className='content-scroll' scrollY>
@@ -220,6 +273,17 @@ export default function ProductDetailPage() {
           </View>
         </View>
       </View>
+
+      {/* 分享海报弹窗 */}
+      {product && (
+        <SharePoster
+          visible={showSharePoster}
+          product={product}
+          userInfo={userInfo || {}}
+          qrCodeUrl={qrCodeUrl}
+          onClose={() => setShowSharePoster(false)}
+        />
+      )}
     </View>
   )
 }

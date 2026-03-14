@@ -13,6 +13,7 @@ import {
 import { getUserInfo, clearAuth, isLoggedIn } from '@/utils/auth'
 import { generateQRCode } from '@/api/qrcode'
 import { getAnalyticsSummary } from '@/api/analytics'
+import { getShareStats } from '@/api/share'
 import './index.scss'
 
 export default function UserPage() {
@@ -22,6 +23,11 @@ export default function UserPage() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [todayViews, setTodayViews] = useState(0)
   const [hasNewData, setHasNewData] = useState(false)
+  const [shareStats, setShareStats] = useState({
+    totalShares: 0,
+    totalViews: 0,
+    totalConversions: 0
+  })
 
   // 管理菜单
   const managementMenuItems = [
@@ -47,8 +53,22 @@ export default function UserPage() {
   useEffect(() => {
     if (loggedIn) {
       loadAnalyticsSummary()
+      loadShareStats()
     }
   }, [loggedIn])
+
+  const loadShareStats = async () => {
+    try {
+      const res = await getShareStats()
+      setShareStats({
+        totalShares: res.totalShares || 0,
+        totalViews: res.totalViews || 0,
+        totalConversions: res.totalConversions || 0
+      })
+    } catch (error) {
+      console.error('加载分享统计失败:', error)
+    }
+  }
 
   const loadAnalyticsSummary = async () => {
     try {
@@ -252,6 +272,29 @@ export default function UserPage() {
           </View>
         </View>
       </View>
+
+      {/* 分享统计区域 */}
+      {loggedIn && (
+        <View className='stats-section'>
+          <View className='stats-header'>
+            <Text className='stats-title'>分享效果</Text>
+          </View>
+          <View className='stats-grid'>
+            <View className='stat-item'>
+              <Text className='stat-value'>{shareStats.totalShares}</Text>
+              <Text className='stat-label'>分享次数</Text>
+            </View>
+            <View className='stat-item'>
+              <Text className='stat-value'>{shareStats.totalViews}</Text>
+              <Text className='stat-label'>带来访客</Text>
+            </View>
+            <View className='stat-item'>
+              <Text className='stat-value'>{shareStats.totalConversions}</Text>
+              <Text className='stat-label'>转化次数</Text>
+            </View>
+          </View>
+        </View>
+      )}
 
       {/* 产品管理区域 */}
       <View className='menu-section'>

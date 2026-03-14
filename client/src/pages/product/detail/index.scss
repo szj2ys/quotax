@@ -39,6 +39,26 @@
     .nav-placeholder {
       width: 32px;
     }
+
+    .share-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transition: all 0.2s ease;
+
+      &:active {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0.95);
+      }
+
+      .share-icon {
+        font-size: 16px;
+      }
+    }
   }
 
   .content-scroll {
