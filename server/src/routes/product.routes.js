@@ -99,6 +99,157 @@ router.get('/', async (req, res) => {
 });
 
 /**
+ * @route   GET /api/products/search
+ * @desc    高级搜索产品（支持多条件筛选）
+ * @access  Public
+ */
+router.get('/search', async (req, res) => {
+  try {
+    const {
+      page = 1,
+      pageSize = 10,
+      keyword,
+      categoryId,
+      minPrice,
+      maxPrice,
+      sortBy = 'default'
+    } = req.query;
+
+    // 验证分页参数
+    const pageNum = parseInt(page);
+    const pageSizeNum = parseInt(pageSize);
+    if (isNaN(pageNum) || pageNum < 1) {
+      return res.status(400).json({
+        code: 400,
+        message: 'page 必须是正整数',
+        data: null
+      });
+    }
+    if (isNaN(pageSizeNum) || pageSizeNum < 1) {
+      return res.status(400).json({
+        code: 400,
+        message: 'pageSize 必须是正整数',
+        data: null
+      });
+    }
+
+    // 验证价格参数
+    const minPriceNum = minPrice !== undefined ? parseFloat(minPrice) : undefined;
+    const maxPriceNum = maxPrice !== undefined ? parseFloat(maxPrice) : undefined;
+    if (minPrice !== undefined && (isNaN(minPriceNum) || minPriceNum < 0)) {
+      return res.status(400).json({
+        code: 400,
+        message: 'minPrice 必须是非负数',
+        data: null
+      });
+    }
+    if (maxPrice !== undefined && (isNaN(maxPriceNum) || maxPriceNum < 0)) {
+      return res.status(400).json({
+        code: 400,
+        message: 'maxPrice 必须是非负数',
+        data: null
+      });
+    }
+    if (minPriceNum !== undefined && maxPriceNum !== undefined && minPriceNum > maxPriceNum) {
+      return res.status(400).json({
+        code: 400,
+        message: 'minPrice 不能大于 maxPrice',
+        data: null
+      });
+    }
+
+    // 构建查询条件
+    const query = { status: 'on' };
+
+    // 关键词搜索
+    if (keyword && keyword.trim()) {
+      query.$or = [
+        { name: { $regex: keyword.trim(), $options: 'i' } },
+        { description: { $regex: keyword.trim(), $options: 'i' } }
+      ];
+    }
+
+    // 分类筛选
+    if (categoryId) {
+      query.categoryId = categoryId;
+    }
+
+    // 价格区间筛选
+    if (minPriceNum !== undefined || maxPriceNum !== undefined) {
+      query.price = {};
+      if (minPriceNum !== undefined) query.price.$gte = minPriceNum;
+      if (maxPriceNum !== undefined) query.price.$lte = maxPriceNum;
+    }
+
+    // 排序逻辑
+    let sortOption = {};
+    switch (sortBy) {
+      case 'price_asc':
+        sortOption = { price: 1 };
+        break;
+      case 'price_desc':
+        sortOption = { price: -1 };
+        break;
+      case 'created_desc':
+        sortOption = { createdAt: -1 };
+        break;
+      default:
+        // 综合排序：按 sort 和创建时间
+        sortOption = { sort: 1, createdAt: -1 };
+    }
+
+    const skip = (pageNum - 1) * pageSizeNum;
+
+    const [products, total] = await Promise.all([
+      Product.find(query)
+        .populate('categoryId', 'name')
+        .sort(sortOption)
+        .skip(skip)
+        .limit(pageSizeNum),
+      Product.countDocuments(query)
+    ]);
+
+    const totalPages = Math.ceil(total / pageSizeNum);
+
+    res.json({
+      code: 200,
+      message: 'success',
+      data: {
+        list: products.map(p => ({
+          id: p._id,
+          name: p.name,
+          description: p.description,
+          images: p.images,
+          categoryId: p.categoryId?._id || p.categoryId,
+          categoryName: p.categoryId?.name || '',
+          price: p.price,
+          priceType: p.priceType,
+          specs: p.specs,
+          unit: p.unit,
+          stock: p.stock,
+          status: p.status,
+          viewCount: p.viewCount,
+          createdAt: p.createdAt
+        })),
+        pagination: {
+          page: pageNum,
+          pageSize: pageSizeNum,
+          total,
+          totalPages
+        }
+      }
+    });
+  } catch (error) {
+    console.error('搜索产品失败:', error);
+    res.status(500).json({
+      code: 500,
+      message: '搜索产品失败',
+      data: error.message
+    });
+  }
+});
+
+/**
  * @route   GET /api/products/:id
  * @desc    获取产品详情
  * @access  Public
