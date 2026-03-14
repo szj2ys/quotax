@@ -50,3 +50,7 @@ public/uploads/
 # TODO files for worktrees
 TODO.md
 .worktrees/
+
+# Worktree TODO files
+TODO.md
+.worktrees/**/TODO.md
